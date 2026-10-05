@@ -3,6 +3,19 @@
 @section('title',$title)
 
 @section('content')
+
+    <div class="mx-auto max-w-4xl text-white bg-black rounded-lg mb-4 gap-2 px-6 py-4 justify-between flex item-end">
+        <div class="flex flex-col">
+            <span class="font-bold text-2xl">
+                Daftar Dealer Yang Tersedia
+            </span>
+            <span class="font-semibold text-sm">
+                Tahun 2026
+            </span>
+        </div>
+        <a href="{{ route('dealers.create') }}" class="px-4 py-2 bg-green-500 text-s rounded-lg flex items-center text-white hover:bg-green-500/40">Tambah Dealer</a>
+    </div>
+
     <div class="bg-white items-center flex justify-center w-full">
         <table class="w-full max-w-4xl border border-gray-300">
             <thead class="bg-gray-200 text-center">

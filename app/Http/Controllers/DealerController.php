@@ -39,7 +39,7 @@ class DealerController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'code' => ['required', 'string', 'unique:dealers,code'],
+            'code' => ['required', 'string','size:4', 'unique:dealers,code'],
             'name' => ['required', 'string', 'max:255']
         ]);
 
