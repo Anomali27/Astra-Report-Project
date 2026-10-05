@@ -12,8 +12,9 @@ Route::get('/', function () {
 
 
 Route::resource('dealers', DealerController::class);
-Route::resource('department', DepartmentController::class);
+Route::resource('departments', DepartmentController::class);
 Route::resource('areas', AreaController::class);
 Route::resource('assignments', AssignmentController::class);
 
-
+Route::get('assignments/{id}/submit',[AssignmentController::class, 'submit'])->name('assignments.submit');
+Route::get('assignments/{id}/review', [AssignmentController::class, 'review'])->name('assignments.review');

@@ -12,9 +12,31 @@ class DealerController extends Controller
     public function index()
     {
         $title = "Astra Report - Daftar Dealer";
-        
+        $dealers = [
+            [
+                'id' => 1,
+                'code' => 'DL-0001',
+                'name' => 'Dealer Pontianak'
+            ],
+            [
+                'id' => 2,
+                'code' => 'DL-0002',
+                'name' => 'Dealer Kubu Raya'
+            ],
+            [
+                'id' => 3,
+                'code' => 'DL-0003',
+                'name' => 'Dealer Palangkaraya'
+            ],
+            [
+                'id' => 4,
+                'code' => 'DL-0004',
+                'name' => 'Dealer Jakarta'
+            ]
+        ];
         return view('dealers.index', [
             'title' => $title,
+            'dealers' => $dealers
         ]);
     }
 
