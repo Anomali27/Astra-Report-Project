@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dealer;
 use Illuminate\Http\Request;
 
 class DealerController extends Controller
@@ -12,28 +13,8 @@ class DealerController extends Controller
     public function index()
     {
         $title = "Astra Report - Daftar Dealer";
-        $dealers = [
-            [
-                'id' => 1,
-                'code' => 'DL-0001',
-                'name' => 'Dealer Pontianak'
-            ],
-            [
-                'id' => 2,
-                'code' => 'DL-0002',
-                'name' => 'Dealer Kubu Raya'
-            ],
-            [
-                'id' => 3,
-                'code' => 'DL-0003',
-                'name' => 'Dealer Palangkaraya'
-            ],
-            [
-                'id' => 4,
-                'code' => 'DL-0004',
-                'name' => 'Dealer Jakarta'
-            ]
-        ];
+        $dealers = Dealer::all();
+        
         return view('dealers.index', [
             'title' => $title,
             'dealers' => $dealers
@@ -57,7 +38,13 @@ class DealerController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $validatedData = $request->validate([
+            'code' => ['required', 'string', 'unique:dealers,code'],
+            'name' => ['required', 'string', 'max:255']
+        ]);
+
+        Dealer::create($validatedData);
+        return redirect()->route('dealers.index');
     }
 
     /**
@@ -66,9 +53,11 @@ class DealerController extends Controller
     public function show(string $id)
     {
         $title = "Astra Report - Detail Dealer";
+        $dealer = Dealer::findOrFail($id);
         
         return view('dealers.show', [
             'title' => $title,
+            'dealer' => $dealer
         ]);
     }
 
@@ -79,24 +68,34 @@ class DealerController extends Controller
     {
         $title = "Astra Report - Edit Dealer";
         
+        $dealer = Dealer::findOrFail($id);
+        
         return view('dealers.edit', [
             'title' => $title,
+            'dealer' => $dealer
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Dealer $dealer)
     {
-        //
+        $validatedData = $request->validate([
+            'code' => ['required', 'string','size:4', 'unique:dealers,code,' . $dealer->id],
+            'name' => ['required', 'string']
+        ]);
+
+        $dealer->update($validatedData);
+        return redirect()->route('dealers.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Dealer $dealer)
     {
-        //
+        $dealer->delete();
+        return redirect()->route('dealers.index');
     }
 }

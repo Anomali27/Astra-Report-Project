@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Dealer;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,6 @@ class DealerSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Dealer::factory(10)->create();
     }
 }

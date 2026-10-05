@@ -15,7 +15,7 @@
             </thead>
 
             <tbody class="text-center">
-                @foreach ( $dealers as $dealer )
+                @foreach ($dealers as $dealer)
                 <tr>
                     <td class="border border-gray-300 px-4 py-2 text-sm text-black">
                         {{ $loop->iteration }}
@@ -30,7 +30,19 @@
                         <div class="flex gap-5 justify-center">
                             <a href="{{ route('dealers.show' , ['dealer' => $dealer['id']]) }}" class="px-4 py-2 bg-blue-500 text-s rounded-lg text-white hover:bg-blue-500/40">Lihat</a>
                             <a href="{{ route('dealers.edit' , ['dealer' => $dealer['id']]) }}" class="px-4 py-2 bg-yellow-500 text-s rounded-lg text-white hover:bg-yellow-500/40">Edit</a>
-                            <a href="" class="px-4 py-2 bg-red-500 text-s rounded-lg text-white hover:bg-red-500/40">Delete</a>
+                            <form 
+                                action="{{ route('dealers.destroy', ['dealer' => $dealer->id])}}"
+                                method="POST"
+                                onsubmit="return confirm('Hapus data dealer dari data tabel')">
+                                @csrf
+                                @method('DELETE')
+
+                                <button 
+                                    type="submit"
+                                    class="px-4 py-2 bg-red-500 text-s rounded-lg text-white hover:bg-red-500/40">
+                                    Hapus
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>
