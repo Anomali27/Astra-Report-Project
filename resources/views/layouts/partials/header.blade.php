@@ -14,7 +14,7 @@
             <a href="{{ route('dealers.index') }}" class="hover:text-white/55">Dealer</a>
             <a href="{{ route('departments.index') }}" class="hover:text-white/55">Department</a>
             <a href="{{ route('areas.index') }}" class="hover:text-white/55">Area</a>
-            <a href="{{ route('assignments.index') }}" class="hover:text-white/55">Task</a>
+            <a href="{{ route('tasks.index') }}" class="hover:text-white/55">Task</a>
         </nav>
     </div>
 </header>

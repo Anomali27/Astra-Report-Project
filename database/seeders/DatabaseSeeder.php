@@ -15,8 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory()->create([
+            'id' => 1,
+            'name' => 'Supervisor Astra',
+            'email' => 'supervisor@astra.com',
+            'password' => bcrypt('password123'),
+        ]);
+        
         $this->call([
-            DealerSeeder::class
+            DealerSeeder::class,
+            DepartmentSeeder::class,
+            AreaSeeder::class,
+            TaskSeeder::class
         ]);
     }
 }

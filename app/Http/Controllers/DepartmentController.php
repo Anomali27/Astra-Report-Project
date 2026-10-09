@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -12,9 +13,11 @@ class DepartmentController extends Controller
     public function index()
     {
         $title = "Astra Report - Daftar Department";
+        $departments = Department::all();
 
         return view('departments.index', [
-            'title' => $title
+            'title' => $title,
+            'departments' => $departments
         ]);
 
     }
@@ -36,7 +39,13 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'code' => ['string', 'required','size:3', 'max:3', 'unique:departments,code'],
+            'name' => ['string', 'required']
+        ]);
+
+        Department::create($validatedData);
+        return redirect()->route('departments.index');
     }
 
     /**
@@ -45,9 +54,11 @@ class DepartmentController extends Controller
     public function show(string $id)
     {
         $title = "Astra Report - Detail Department";
+        $department = Department::findOrFail($id);
 
         return view('departments.show', [
-            'title' => $title
+            'title' => $title,
+            'department' => $department
         ]);
     }
 
@@ -57,25 +68,34 @@ class DepartmentController extends Controller
     public function edit(string $id)
     {
         $title = "Astra Report - Edit Department";
+        $department = Department::findOrFail($id);
 
         return view('departments.edit', [
-            'title' => $title
+            'title' => $title,
+            'deparment' => $department
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Department $department)
     {
-        //
+        $validatedData = request()->validate([
+            'code' => ['string', 'required', 'size:3', 'max:3', 'unique:departments,code,' . $department->id],
+            'name' => ['string', 'required']
+        ]);
+        
+        $department->update($validatedData);
+        return redirect()->route('departments.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Department $department)
     {
-        //
+        $department->delete();
+        return redirect()->route('departments.index');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use Illuminate\Http\Request;
 
 class AreaController extends Controller
@@ -12,9 +13,11 @@ class AreaController extends Controller
     public function index()
     {
         $title = "Astra Report - Daftar Area";
-
+        $areas = Area::all();
+        
         return view('areas.index', [
-            'title' => $title
+            'title' => $title,
+            'areas' => $areas
         ]);
     }
 
@@ -35,7 +38,13 @@ class AreaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'code' => ['required', 'string','size:2', 'max:2', 'unique:areas,code'],
+            'name' => ['required', 'string']
+        ]);
+
+        Area::create($validatedData);
+        return redirect()->route('areas.index');
     }
 
     /**
@@ -44,9 +53,11 @@ class AreaController extends Controller
     public function show(string $id)
     {
         $title = "Astra Report - Detail Area";
+        $area = Area::findOrFail($id);
 
         return view('areas.show', [
-            'title' => $title
+            'title' => $title,
+            'area' => $area
         ]);
     }
 
@@ -56,25 +67,34 @@ class AreaController extends Controller
     public function edit(string $id)
     {
         $title = "Astra Report - Edit Area";
+        $area = Area::findOrFail($id);
 
         return view('areas.edit', [
-            'title' => $title
+            'title' => $title,
+            'area' => $area
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Area $area)
     {
-        //
+        $validatedData = request()->validate([
+            'code' => ['required', 'string','size:2', 'max:2', 'unique:areas,code,' . $area->id],
+            'name' => ['string', 'required']
+        ]);
+
+        $area->update($validatedData);
+        return redirect()->route('areas.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Area $area)
     {
-        //
+        $area->delete();
+        return redirect()->route('areas.index');
     }
 }
