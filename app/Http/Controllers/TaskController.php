@@ -157,6 +157,7 @@ class TaskController extends Controller
     public function submit(Task $task)
     {
         $title = 'Astra Report - Pengumpulan Task';
+        $task->load(['department', 'area']);
 
         $submission = TaskSubmission::where('task_id', $task->id)
             ->where('dealer_id', Auth::id())
@@ -197,6 +198,8 @@ class TaskController extends Controller
             ]);
         }
 
+        $isRevisi = $submission && $submission->status === 'REVISI';
+
         $submission = TaskSubmission::updateOrCreate(
             [
                 'task_id' => $task->id,
@@ -214,7 +217,7 @@ class TaskController extends Controller
         TaskActivityLog::create([
             'task_submission_id' => $submission->id,
             'user_id' => Auth::id(),
-            'activity' => 'Pengumpulan task',
+            'activity' => $isRevisi ? 'Pengumpulan Ulang' : 'Kumpul',
             'note' => $validatedData['note'] ?? null,
         ]);
 
@@ -249,16 +252,21 @@ class TaskController extends Controller
             'reviewed_at' => now(),
         ]);
 
+        $activityText = match ($validatedData['status']) {
+            'REVISI' => 'Supervisor Minta Revisi',
+            'DISETUJUI' => 'Supervisor Menyetujui Pengumpulan',
+            'DITOLAK' => 'Supervisor Menolak Hasil Pekerjaan',
+            default => 'Review: ' . $validatedData['status'],
+        };
+
         TaskActivityLog::create([
             'task_submission_id' => $submission->id,
             'user_id' => Auth::id(),
-            'activity' => 'Review: ' . $validatedData['status'],
+            'activity' => $activityText,
             'note' => $validatedData['note'] ?? null,
         ]);
 
         return redirect()->route('tasks.review', $task->id)
             ->with('success', 'Review berhasil disimpan.');
     }
-
-
 }

@@ -1,19 +1,23 @@
 @extends('layouts.app')
 
-@section('title',$title)
+@section('title', $title)
 
 @section('content')
 
-    <div class="mx-auto max-w-4xl text-white bg-black rounded-lg mb-4 gap-2 px-6 py-4 justify-between flex item-end">
+    <div class="mx-auto max-w-4xl text-white bg-black rounded-lg mb-4 gap-2 px-6 py-4 justify-between flex items-center">
         <div class="flex flex-col">
             <span class="font-bold text-2xl">
                 Daftar Area Yang Tersedia
             </span>
-            <span class="font-semibold text-sm">
+            <span class="font-semibold text-sm text-gray-400">
                 Tahun 2026
             </span>
         </div>
-        <a href="{{ route('areas.create') }}" class="px-4 py-2 bg-green-500 text-s rounded-lg flex items-center text-white hover:bg-green-500/40">Tambah Dealer</a>
+        @if(auth()->user()->role === 'supervisor')
+            <a href="{{ route('areas.create') }}" class="px-4 py-2 bg-green-500 text-sm rounded-lg flex items-center text-white hover:bg-green-600 font-semibold">
+                + Tambah Area
+            </a>
+        @endif
     </div>
 
     <div class="bg-white items-center flex justify-center w-full">
@@ -40,22 +44,29 @@
                         {{ $area['name'] }}
                     </td>
                     <td class="border border-gray-300 px-4 py-2">
-                        <div class="flex gap-5 justify-center">
-                            <a href="{{ route('areas.show' , ['area' => $area['id']]) }}" class="px-4 py-2 bg-blue-500 text-s rounded-lg text-white hover:bg-blue-500/40">Lihat</a>
-                            <a href="{{ route('areas.edit' , ['area' => $area['id']]) }}" class="px-4 py-2 bg-yellow-500 text-s rounded-lg text-white hover:bg-yellow-500/40">Edit</a>
-                            <form 
-                                action="{{ route('areas.destroy', ['area' => $area->id])}}"
-                                method="POST"
-                                onsubmit="return confirm('Hapus data area dari data tabel')">
-                                @csrf
-                                @method('DELETE')
+                        <div class="flex gap-2 justify-center">
+                            <a href="{{ route('areas.show', ['area' => $area['id']]) }}" class="px-3 py-1 bg-blue-500 text-sm rounded text-white hover:bg-blue-600">
+                                Lihat
+                            </a>
 
-                                <button
-                                    type="submit"
-                                    class="px-4 py-2 bg-red-500 text-s rounded-lg text-white hover:bg-red-500/40">
-                                    Hapus
-                                </button>
-                            </form>
+                            @if(auth()->user()->role === 'supervisor')
+                                <a href="{{ route('areas.edit', ['area' => $area['id']]) }}" class="px-3 py-1 bg-yellow-500 text-sm rounded text-white hover:bg-yellow-600">
+                                    Edit
+                                </a>
+                                <form 
+                                    action="{{ route('areas.destroy', ['area' => $area->id]) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Hapus data area ini?')">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        type="submit"
+                                        class="px-3 py-1 bg-red-500 text-sm rounded text-white hover:bg-red-600">
+                                        Hapus
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </td>
                 </tr>
@@ -64,7 +75,7 @@
         </table>
     </div>
 
-    <div class="mt-6">
+    <div class="mt-6 max-w-4xl mx-auto">
         {{ $areas->links() }}
     </div>
 @endsection
