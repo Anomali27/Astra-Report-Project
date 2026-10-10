@@ -3,73 +3,92 @@
 @section('title', $title)
 
 @section('content')
-    <div class="flex justify-center w-full mt-10">
-        <div class="w-full max-w-5xl bg-white p-6 rounded-lg shadow-md border border-gray-200">
-            
-            <div class="flex justify-between items-center mb-4 border-b pb-4">
-                <h1 class="text-2xl font-bold text-gray-800">Daftar Tugas (Tasks)</h1>
-                
-                <a href="{{ route('tasks.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow transition">
-                    + Tambah Tugas
-                </a>
-            </div>
+    <div class="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Daftar Task</h1>
 
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 shadow-sm relative">
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-            @endif
+            <a href="{{ route('tasks.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded">
+                + Tambah Task
+            </a>
+        </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse border border-gray-300">
-                    
-                    <thead class="bg-gray-200 text-center">
-                        <tr>
-                            <th class="border border-gray-300 px-4 py-2 align-middle">No</th>
-                            <th class="border border-gray-300 px-4 py-2 align-middle">Nama Laporan</th>
-                            <th class="border border-gray-300 px-4 py-2 align-middle">Batas Waktu</th>
-                            <th class="border border-gray-300 px-4 py-2 align-middle">Aksi</th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody class="text-center">
-                        {{-- Contoh data statis, nanti akan diganti dengan @foreach dari variabel $tasks --}}
-                        @foreach ($tasks as $task)
-                        <tr>
-                            <td class="border border-gray-300 px-4 py-2 align-middle">
-                                {{ $loop->iteration }}
+        @if (session('success'))
+            <p class="bg-green-100 text-green-700 p-3 rounded mb-4">
+                {{ session('success') }}
+            </p>
+        @endif
+
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border p-3">No</th>
+                        <th class="border p-3">Judul</th>
+                        <th class="border p-3">Departemen</th>
+                        <th class="border p-3">Area</th>
+                        <th class="border p-3">Deadline</th>
+                        <th class="border p-3">Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($tasks as $task)
+                        <tr class="text-center">
+                            <td class="border p-3">{{ $loop->iteration }}</td>
+                            <td class="border p-3">{{ $task->title }}</td>
+                            <td class="border p-3">
+                                {{ $task->department->name ?? '-' }}
                             </td>
-                            <td class="border border-gray-300 px-4 py-2 align-middle font-medium">
-                                {{ $task['title'] }}
+                            <td class="border p-3">
+                                {{ $task->area->name ?? '-' }}
                             </td>
-                            <td class="border border-gray-300 px-4 py-2 align-middle text-red-600 font-semibold">
-                                {{ $task['due_at'] }}
+                            <td class="border p-3">
+                                {{ $task->due_at->format('d-m-Y') }}
                             </td>
-                            <td class="border border-gray-300 px-4 py-2 align-middle">
-                                
-                                <div class="flex justify-center gap-2">
-                                    {{-- Tombol Detail --}}
-                                    <a href="{{ route('tasks.show', [ 'task' => $task['id']]) }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded shadow">
+                            <td class="border p-3">
+                                <div class="flex justify-center gap-2 flex-wrap">
+                                    <a href="{{ route('tasks.show', $task->id) }}"
+                                        class="bg-green-600 text-white px-3 py-1 rounded">
                                         Detail
                                     </a>
-                                    
-                                    {{-- Tombol Edit --}}
-                                    <a href="{{ route('tasks.edit', [ 'task' => $task['id']]) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded shadow">
-                                        Edit
-                                    </a>
 
-                                    {{-- Tombol khusus Review (Sesuai rute kustom Anda sebelumnya) --}}
-                                    <a href="{{ route('tasks.review', [ 'task' => $task['id']]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded shadow">
+                                    <a href="{{ route('tasks.review', $task->id) }}"
+                                        class="bg-blue-600 text-white px-3 py-1 rounded">
                                         Review
                                     </a>
-                                </div>
 
+                                    @if ($task->submissions_count == 0)
+                                        <a href="{{ route('tasks.edit', $task->id) }}"
+                                            class="bg-yellow-500 text-white px-3 py-1 rounded">
+                                            Edit
+                                        </a>
+
+                                        <form action="{{ route('tasks.destroy', $task->id) }}" method="POST"
+                                            onsubmit="return confirm('Hapus task ini?')">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="text-gray-500 text-sm">
+                                            Terkunci
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="border p-4 text-center">
+                                Belum ada task.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 @endsection

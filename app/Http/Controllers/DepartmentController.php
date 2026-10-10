@@ -13,7 +13,7 @@ class DepartmentController extends Controller
     public function index()
     {
         $title = "Astra Report - Daftar Department";
-        $departments = Department::all();
+        $departments = Department::select(['id', 'code', 'name'])->paginate(5);
 
         return view('departments.index', [
             'title' => $title,

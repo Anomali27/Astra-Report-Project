@@ -13,7 +13,7 @@ class AreaController extends Controller
     public function index()
     {
         $title = "Astra Report - Daftar Area";
-        $areas = Area::all();
+        $areas = Area::select(['id', 'code', 'name'])->paginate(5);
         
         return view('areas.index', [
             'title' => $title,

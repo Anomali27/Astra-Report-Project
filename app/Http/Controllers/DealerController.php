@@ -13,7 +13,7 @@ class DealerController extends Controller
     public function index()
     {
         $title = "Astra Report - Daftar Dealer";
-        $dealers = Dealer::all();
+        $dealers = Dealer::select(['id', 'code', 'name'])->paginate(5);
         
         return view('dealers.index', [
             'title' => $title,

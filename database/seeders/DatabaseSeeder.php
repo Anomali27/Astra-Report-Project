@@ -14,17 +14,11 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-    {
-        User::factory()->create([
-            'id' => 1,
-            'name' => 'Supervisor Astra',
-            'email' => 'supervisor@astra.com',
-            'password' => bcrypt('password123'),
-        ]);
-        
+    {        
         $this->call([
-            DealerSeeder::class,
+            UserSeeder::class,
             DepartmentSeeder::class,
+            DealerSeeder::class,
             AreaSeeder::class,
             TaskSeeder::class
         ]);
